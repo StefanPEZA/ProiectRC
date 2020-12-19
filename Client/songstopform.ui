@@ -1,0 +1,372 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>SongsTopForm</class>
+ <widget class="QWidget" name="SongsTopForm">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1001</width>
+    <height>541</height>
+   </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>1001</width>
+    <height>541</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>1001</width>
+    <height>541</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">background-color:rgb(46, 52, 54);
+color:white;</string>
+  </property>
+  <widget class="QStackedWidget" name="stackedWidget">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>1001</width>
+     <height>541</height>
+    </rect>
+   </property>
+   <property name="minimumSize">
+    <size>
+     <width>1001</width>
+     <height>541</height>
+    </size>
+   </property>
+   <property name="maximumSize">
+    <size>
+     <width>1001</width>
+     <height>541</height>
+    </size>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">color:white</string>
+   </property>
+   <property name="currentIndex">
+    <number>1</number>
+   </property>
+   <widget class="QWidget" name="topPage">
+    <widget class="QPushButton" name="pushButton">
+     <property name="geometry">
+      <rect>
+       <x>160</x>
+       <y>10</y>
+       <width>131</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>12</pointsize>
+      </font>
+     </property>
+     <property name="cursor">
+      <cursorShape>PointingHandCursor</cursorShape>
+     </property>
+     <property name="focusPolicy">
+      <enum>Qt::StrongFocus</enum>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QPushButton{
+	color:white;
+}
+
+QPushButton:hover{
+    background-color: rgb(85, 87, 83);
+}</string>
+     </property>
+     <property name="text">
+      <string>Reimprospatare</string>
+     </property>
+    </widget>
+    <widget class="QComboBox" name="comboBox">
+     <property name="geometry">
+      <rect>
+       <x>50</x>
+       <y>10</y>
+       <width>111</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>12</pointsize>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QComboBox{ 
+color:white;
+background-color: rgb(46, 52, 54); 
+}</string>
+     </property>
+     <item>
+      <property name="text">
+       <string>nimic</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Electronic</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Hip-hop</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>House</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Pop</string>
+      </property>
+     </item>
+    </widget>
+    <widget class="QListWidget" name="songList">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>50</y>
+       <width>1001</width>
+       <height>481</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>12</pointsize>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true"/>
+     </property>
+     <property name="frameShape">
+      <enum>QFrame::Box</enum>
+     </property>
+     <property name="verticalScrollBarPolicy">
+      <enum>Qt::ScrollBarAlwaysOn</enum>
+     </property>
+     <property name="horizontalScrollBarPolicy">
+      <enum>Qt::ScrollBarAlwaysOff</enum>
+     </property>
+     <property name="selectionMode">
+      <enum>QAbstractItemView::NoSelection</enum>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>0</width>
+       <height>0</height>
+      </size>
+     </property>
+     <property name="movement">
+      <enum>QListView::Static</enum>
+     </property>
+     <property name="spacing">
+      <number>2</number>
+     </property>
+     <property name="viewMode">
+      <enum>QListView::ListMode</enum>
+     </property>
+     <property name="itemAlignment">
+      <set>Qt::AlignHCenter</set>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="songGenre">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>10</y>
+       <width>41</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>13</pointsize>
+       <weight>50</weight>
+       <bold>false</bold>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">border:none;border-radius:5px;color:white;</string>
+     </property>
+     <property name="text">
+      <string>Gen</string>
+     </property>
+     <property name="frame">
+      <bool>false</bool>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QWidget" name="commentPage">
+    <widget class="QListWidget" name="commentsList">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>60</y>
+       <width>1001</width>
+       <height>401</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>12</pointsize>
+      </font>
+     </property>
+     <property name="frameShape">
+      <enum>QFrame::Box</enum>
+     </property>
+     <property name="verticalScrollBarPolicy">
+      <enum>Qt::ScrollBarAlwaysOn</enum>
+     </property>
+     <property name="horizontalScrollBarPolicy">
+      <enum>Qt::ScrollBarAlwaysOff</enum>
+     </property>
+     <property name="selectionMode">
+      <enum>QAbstractItemView::NoSelection</enum>
+     </property>
+     <property name="spacing">
+      <number>5</number>
+     </property>
+     <property name="wordWrap">
+      <bool>true</bool>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="postComment">
+     <property name="geometry">
+      <rect>
+       <x>860</x>
+       <y>480</y>
+       <width>131</width>
+       <height>51</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>12</pointsize>
+      </font>
+     </property>
+     <property name="cursor">
+      <cursorShape>PointingHandCursor</cursorShape>
+     </property>
+     <property name="focusPolicy">
+      <enum>Qt::StrongFocus</enum>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QPushButton{
+	color:white;
+}
+
+QPushButton:hover{
+    background-color: rgb(85, 87, 83);
+}</string>
+     </property>
+     <property name="text">
+      <string>Posteaza</string>
+     </property>
+    </widget>
+    <widget class="QPlainTextEdit" name="commentText">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>479</y>
+       <width>851</width>
+       <height>51</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>12</pointsize>
+      </font>
+     </property>
+     <property name="verticalScrollBarPolicy">
+      <enum>Qt::ScrollBarAlwaysOff</enum>
+     </property>
+     <property name="horizontalScrollBarPolicy">
+      <enum>Qt::ScrollBarAlwaysOff</enum>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="goBackButton">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>10</y>
+       <width>121</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>12</pointsize>
+      </font>
+     </property>
+     <property name="cursor">
+      <cursorShape>PointingHandCursor</cursorShape>
+     </property>
+     <property name="focusPolicy">
+      <enum>Qt::StrongFocus</enum>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QPushButton{
+	color:white;
+}
+
+QPushButton:hover{
+    background-color: rgb(85, 87, 83);
+}</string>
+     </property>
+     <property name="text">
+      <string>&lt;&lt; Inapoi</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="songTitle">
+     <property name="geometry">
+      <rect>
+       <x>140</x>
+       <y>10</y>
+       <width>821</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>13</pointsize>
+       <weight>50</weight>
+       <bold>false</bold>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">border:none;border-radius:5px;</string>
+     </property>
+     <property name="text">
+      <string>song_title and author</string>
+     </property>
+     <property name="readOnly">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </widget>
+  </widget>
+ </widget>
+ <tabstops>
+  <tabstop>pushButton</tabstop>
+  <tabstop>songList</tabstop>
+  <tabstop>songGenre</tabstop>
+  <tabstop>comboBox</tabstop>
+ </tabstops>
+ <resources/>
+ <connections/>
+</ui>
