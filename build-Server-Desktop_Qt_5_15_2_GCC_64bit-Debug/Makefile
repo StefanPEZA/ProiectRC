@@ -93,8 +93,6 @@ DIST          = ../../../Qt/5.15.2/gcc_64/mkspecs/features/spec_pre.prf \
 		../../../Qt/5.15.2/gcc_64/mkspecs/modules/qt_lib_bluetooth.pri \
 		../../../Qt/5.15.2/gcc_64/mkspecs/modules/qt_lib_bluetooth_private.pri \
 		../../../Qt/5.15.2/gcc_64/mkspecs/modules/qt_lib_bootstrap_private.pri \
-		../../../Qt/5.15.2/gcc_64/mkspecs/modules/qt_lib_charts.pri \
-		../../../Qt/5.15.2/gcc_64/mkspecs/modules/qt_lib_charts_private.pri \
 		../../../Qt/5.15.2/gcc_64/mkspecs/modules/qt_lib_concurrent.pri \
 		../../../Qt/5.15.2/gcc_64/mkspecs/modules/qt_lib_concurrent_private.pri \
 		../../../Qt/5.15.2/gcc_64/mkspecs/modules/qt_lib_core.pri \
@@ -283,8 +281,6 @@ Makefile: ../Server/Server.pro ../../../Qt/5.15.2/gcc_64/mkspecs/linux-g++/qmake
 		../../../Qt/5.15.2/gcc_64/mkspecs/modules/qt_lib_bluetooth.pri \
 		../../../Qt/5.15.2/gcc_64/mkspecs/modules/qt_lib_bluetooth_private.pri \
 		../../../Qt/5.15.2/gcc_64/mkspecs/modules/qt_lib_bootstrap_private.pri \
-		../../../Qt/5.15.2/gcc_64/mkspecs/modules/qt_lib_charts.pri \
-		../../../Qt/5.15.2/gcc_64/mkspecs/modules/qt_lib_charts_private.pri \
 		../../../Qt/5.15.2/gcc_64/mkspecs/modules/qt_lib_concurrent.pri \
 		../../../Qt/5.15.2/gcc_64/mkspecs/modules/qt_lib_concurrent_private.pri \
 		../../../Qt/5.15.2/gcc_64/mkspecs/modules/qt_lib_core.pri \
@@ -462,8 +458,6 @@ Makefile: ../Server/Server.pro ../../../Qt/5.15.2/gcc_64/mkspecs/linux-g++/qmake
 ../../../Qt/5.15.2/gcc_64/mkspecs/modules/qt_lib_bluetooth.pri:
 ../../../Qt/5.15.2/gcc_64/mkspecs/modules/qt_lib_bluetooth_private.pri:
 ../../../Qt/5.15.2/gcc_64/mkspecs/modules/qt_lib_bootstrap_private.pri:
-../../../Qt/5.15.2/gcc_64/mkspecs/modules/qt_lib_charts.pri:
-../../../Qt/5.15.2/gcc_64/mkspecs/modules/qt_lib_charts_private.pri:
 ../../../Qt/5.15.2/gcc_64/mkspecs/modules/qt_lib_concurrent.pri:
 ../../../Qt/5.15.2/gcc_64/mkspecs/modules/qt_lib_concurrent_private.pri:
 ../../../Qt/5.15.2/gcc_64/mkspecs/modules/qt_lib_core.pri:
