@@ -9,35 +9,42 @@
 
 #include "songinfowidget.h"
 
-namespace Ui {
+namespace Ui
+{
 class SongsTopForm;
 }
 
 class SongsTopForm : public QWidget
 {
-   Q_OBJECT
+        Q_OBJECT
 
-public:
-   char *username;
-   int acc_type;
-   explicit SongsTopForm(char *username, int _acc_type, int *_sv_sock, QWidget *parent = nullptr);
-   ~SongsTopForm();
+    public:
+        char* username;
+        int acc_type;
+        explicit SongsTopForm(char* username, int _acc_type, int* _sv_sock, QWidget* parent = nullptr);
+        int SendRequestToServer(char* request, char* response);
+        ~SongsTopForm();
 
-private:
-   int song_id;
-   int *sv_sock;
-   Ui::SongsTopForm *ui;
-   int SendRequestToServer(char *request, char *response);
+    private:
+        int song_id;
+        int* sv_sock;
+        Ui::SongsTopForm* ui;
 
-signals:
-   void disconnectedFromServer();
+    signals:
+        void disconnectedFromServer();
+        void changeToUserPage();
 
-public slots:
-   void on_pushButton_clicked();
-   void emitDisconnectSignal();
-   void goToComments(int song_id, const char *title);
-   void on_postComment_clicked();
-   void on_goBackButton_clicked();
+    public slots:
+        void on_pushButton_clicked();
+        void emitDisconnectSignal();
+        void goToComments(int song_id, const char* title);
+        void on_postComment_clicked();
+        void on_goBackButton_clicked();
+    private slots:
+        void on_goToUsers_clicked();
+        void on_goToAddSong_clicked();
+        void on_goBack2_clicked();
+        void on_addSongButton_clicked();
 };
 
 #endif // SONGSTOPFORM_H

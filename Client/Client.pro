@@ -12,17 +12,20 @@ SOURCES += \
     main.cpp \
     mainwindow.cpp \
     songinfowidget.cpp \
-    songstopform.cpp
+    songstopform.cpp \
+    userinfowidget.cpp
 
 HEADERS += \
     mainwindow.h \
     songinfowidget.h \
-    songstopform.h
+    songstopform.h \
+    userinfowidget.h
 
 FORMS += \
     mainwindow.ui \
     songinfowidget.ui \
-    songstopform.ui
+    songstopform.ui \
+    userinfowidget.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
