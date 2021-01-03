@@ -112,7 +112,12 @@ background-color: rgb(46, 52, 54);
      </property>
      <item>
       <property name="text">
-       <string>nimic</string>
+       <string>toate</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Country</string>
       </property>
      </item>
      <item>

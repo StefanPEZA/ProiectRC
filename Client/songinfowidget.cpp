@@ -32,7 +32,7 @@ songInfoWidget::songInfoWidget(int* _sv_sock, int _acc_type, int _place, int _so
     genres   = _gens;
     votes    = _votes;
 
-    ui->songDesc->setHtml("<div style=\"white-space: pre-wrap;\">" + desc + "</div><br><br>Genuri muzicale: " + genres);
+    ui->songDesc->setHtml("Genuri muzicale: " + genres + "</div><br><br><div style=\"white-space: pre-wrap;\">" + desc);
     ui->songTitle->setText(name + QString(" - ") + author);
     ui->songPlace->setText(QString::number(place) + ".");
     ui->songVotes->setText(QString("Voturi: ") + QString::number(votes));

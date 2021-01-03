@@ -70,7 +70,7 @@ void SongsTopForm::on_pushButton_clicked()
 
     std::string req(ui->comboBox->currentText().toStdString());
 
-    if (req == "nimic")
+    if (req == "toate")
     {
         req = "GET_TOP|";
     }

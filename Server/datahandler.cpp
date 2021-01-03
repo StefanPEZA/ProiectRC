@@ -28,7 +28,7 @@ bool DataHandler::TryLogin(int* usertype, const char* username, const char* pass
     QString password_check(password);
 
     strcpy(data, "");
-    QSqlQuery q(QSqlDatabase::database(connection_name));
+    QSqlQuery q(DB);
     q.prepare("SELECT username, password, type FROM users WHERE username = :username");
     q.bindValue(":username", name_search);
     q.exec();
@@ -62,7 +62,7 @@ bool DataHandler::TryRegister(int* usertype, const char* username,
     strcpy(data, "");
     bool ok = false;
 
-    QSqlQuery q(QSqlDatabase::database(connection_name));
+    QSqlQuery q(DB);
     q.prepare("SELECT COUNT(*) FROM users WHERE username = :username");
     q.bindValue(":username", username);
     q.exec();
@@ -105,7 +105,7 @@ char* DataHandler::GetSongsTop(char* genre)
         search_by_genre = true;
     }
 
-    QSqlQuery q(QSqlDatabase::database(connection_name));
+    QSqlQuery q(DB);
     if (search_by_genre)
     {
         q.prepare("SELECT s.song_id, s.name, s.author, s.description, s.link, s.genres, "
@@ -160,7 +160,7 @@ bool DataHandler::GetComments(int song_id, char* data)
     strcpy(data, "");
     int       ok       = false;
     int       nr_comms = 0;
-    QSqlQuery q(QSqlDatabase::database(connection_name));
+    QSqlQuery q(DB);
 
     q.prepare("SELECT writed_by, comment FROM comments WHERE song_id = :song_id");
     q.bindValue(":song_id", song_id);
@@ -192,7 +192,7 @@ bool DataHandler::AddComment(int song_id, const char* username,
 {
     bool ok = false;
 
-    QSqlQuery q(QSqlDatabase::database(connection_name));
+    QSqlQuery q(DB);
 
     q.prepare("INSERT INTO comments VALUES (?, ?, ?)");
     q.addBindValue(song_id);
@@ -214,7 +214,7 @@ bool DataHandler::AddComment(int song_id, const char* username,
 
 int DataHandler::GetLastSongId()
 {
-    QSqlQuery q(QSqlDatabase::database(connection_name));
+    QSqlQuery q(DB);
 
     q.prepare("SELECT MAX(song_id) FROM songs");
     q.exec();
@@ -228,7 +228,7 @@ int DataHandler::GetLastSongId()
 bool DataHandler::RemoveSong(int song_id, char* data)
 {
     bool      ok = false;
-    QSqlQuery q(QSqlDatabase::database(connection_name));
+    QSqlQuery q(DB);
 
     q.prepare("DELETE FROM songs WHERE song_id = ?");
     q.addBindValue(song_id);
@@ -248,7 +248,8 @@ bool DataHandler::RemoveSong(int song_id, char* data)
 bool DataHandler::VoteSong(const char* username, int song_id, char* data,
                            bool is_upvote)
 {
-    QSqlQuery q(QSqlDatabase::database(connection_name));
+    DB.transaction();
+    QSqlQuery q(DB);
 
     q.prepare("SELECT COUNT(*) FROM songs WHERE song_id = :song_id");
     q.bindValue(":song_id", song_id);
@@ -257,6 +258,7 @@ bool DataHandler::VoteSong(const char* username, int song_id, char* data,
     if (q.value(0).toInt() == 0)
     {
         strcpy(data, "FAIL|Melodia ceruta nu exista in baza de date");
+        DB.rollback();
         return (false);
     }
 
@@ -267,6 +269,7 @@ bool DataHandler::VoteSong(const char* username, int song_id, char* data,
     if (q.value(0).toInt() == 0)
     {
         strcpy(data, "FAIL|Nu aveti permisiunea de a vota!");
+        DB.rollback();
         return (false);
     }
 
@@ -278,11 +281,13 @@ bool DataHandler::VoteSong(const char* username, int song_id, char* data,
     if (q.value(0).toInt() > 0 && is_upvote)
     {
         strcpy(data, "FAIL|Aveti deja un vot la aceasta melodie!");
+        DB.rollback();
         return (false);
     }
     else if (q.value(0).toInt() == 0 && !is_upvote)
     {
         strcpy(data, "FAIL|Nu aveti inca vot la aceasta melodie!");
+        DB.rollback();
         return (false);
     }
 
@@ -303,6 +308,7 @@ bool DataHandler::VoteSong(const char* username, int song_id, char* data,
         q.exec();
         strcpy(data, "PASS|V-ati retras cu succes votul dat melodiei!");
     }
+    DB.commit();
 
     return (true);
 }
@@ -314,7 +320,8 @@ bool DataHandler::AddSong(const char* name, const char* author,
     int  new_id = GetLastSongId();
     bool ok     = false;
 
-    QSqlQuery q(QSqlDatabase::database(connection_name));
+    DB.transaction();
+    QSqlQuery q(DB);
 
     q.prepare("INSERT INTO songs VALUES (?, ?, ?, ?, ?, ?)");
     q.addBindValue(new_id);
@@ -326,11 +333,13 @@ bool DataHandler::AddSong(const char* name, const char* author,
     if (q.exec())
     {
         strcpy(data, "PASS|Melodia a fost adaugata cu succes!");
+        DB.commit();
         ok = true;
     }
     else
     {
         strcpy(data, "FAIL|Ceva nu a mers bine la adaugarea melodiei!");
+        DB.rollback();
         ok = false;
     }
 
@@ -340,7 +349,8 @@ bool DataHandler::AddSong(const char* name, const char* author,
 bool DataHandler::RestrictVoteRight(const char* username, int has_right,
                                     char* data)
 {
-    QSqlQuery q(QSqlDatabase::database(connection_name));
+    DB.transaction();
+    QSqlQuery q(DB);
 
     q.prepare("SELECT type FROM users WHERE username = ?");
     q.addBindValue(username);
@@ -348,8 +358,8 @@ bool DataHandler::RestrictVoteRight(const char* username, int has_right,
     q.first();
     if (q.value(0).toInt() == 1)
     {
-        strcpy(data,
-               "FAIL|Ceva nu a mers bine, nu puteti bloca accesul la vot unui alt admin!");
+        strcpy(data, "FAIL|Ceva nu a mers bine, nu puteti bloca accesul la vot unui alt admin!");
+        DB.rollback();
         return (false);
     }
 
@@ -366,10 +376,12 @@ bool DataHandler::RestrictVoteRight(const char* username, int has_right,
         {
             sprintf(data, "PASS|Succes, ati permis accesul la vot utilizatorului %s", username);
         }
+        DB.commit();
     }
     else
     {
         strcpy(data, "FAIL|Nu s-a putut actualiza baza de date!");
+        DB.rollback();
         return (false);
     }
 
@@ -381,7 +393,7 @@ bool DataHandler::GetUsers(bool (*isConnected)(const char*), char* data)
     strcpy(data, "");
     int       ok       = false;
     int       nr_users = 0;
-    QSqlQuery q(QSqlDatabase::database(connection_name));
+    QSqlQuery q(DB);
 
     q.prepare("SELECT t.username, t.type, t.can_vote, t.vote_cnt, count(c.comment) comm_cnt "
               "FROM (SELECT u.username, u.type, u.can_vote, count(v.song_id) vote_cnt "
