@@ -260,6 +260,11 @@ void SongsTopForm::on_addSongButton_clicked()
     else
     {
         char* text = strtok(NULL, "|");
+        ui->songNameText->setText("");
+        ui->songAuthorText->setText("");
+        ui->songDescText->setPlainText("");
+        ui->songLinkText->setText("");
+        ui->songGenreText->setText("");
         QMessageBox::information(this, "Succes!", text);
     }
 }

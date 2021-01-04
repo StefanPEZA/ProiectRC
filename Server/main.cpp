@@ -210,26 +210,27 @@ void* serverthread(void* client_socket)
         }
         request[msg_size] = '\0';
 
+        char* saveptr;
         if (!has_access && strchr(request, '|'))
         {
-            char* token = strtok(request, "|");
+            char* token = strtok_r(request, "|", &saveptr);
             if (!strcmp(token, "LOGIN") && !has_access)
             {
-                sprintf(username, "%s", strtok(NULL, "|"));
-                char* password = strtok(NULL, "|");
+                sprintf(username, "%s", strtok_r(NULL, "|", &saveptr));
+                char* password = strtok_r(NULL, "|", &saveptr);
                 has_access = TryClientLogin(&usertype, tnumber, username, password, response, &DB_handler);
             }
             else if (!strcmp(token, "REGISTER") && !has_access)
             {
                 bool ok = true;
-                sprintf(username, "%s", strtok(NULL, "|"));
-                char* first_name = strtok(NULL, "|");
-                char* last_name  = strtok(NULL, "|");
-                char* password   = strtok(NULL, "|");
-                int   acc_type   = atoi(strtok(NULL, "|"));
+                sprintf(username, "%s", strtok_r(NULL, "|", &saveptr));
+                char* first_name = strtok_r(NULL, "|", &saveptr);
+                char* last_name  = strtok_r(NULL, "|", &saveptr);
+                char* password   = strtok_r(NULL, "|", &saveptr);
+                int   acc_type   = atoi(strtok_r(NULL, "|", &saveptr));
                 if (acc_type == 1)
                 {
-                    int check = atoi(strtok(NULL, "|"));
+                    int check = atoi(strtok_r(NULL, "|", &saveptr));
                     if (check != ADMIN_CODE)
                     {
                         ok         = false;
@@ -296,7 +297,8 @@ void* serverthread(void* client_socket)
 bool HandleRequest(int* usertype, int tnumber, const char* username, char* request, char* response,
                    DataHandler* DB_handler)
 {
-    char* token = strtok(request, "|");
+    char* saveptr;
+    char* token = strtok_r(request, "|", &saveptr);
 
     if (!strcmp(token, "GET_USERS"))
     {
@@ -306,7 +308,7 @@ bool HandleRequest(int* usertype, int tnumber, const char* username, char* reque
     }
     else if (!strcmp(token, "GET_TOP"))
     {
-        char* genre = strtok(NULL, "|");
+        char* genre = strtok_r(NULL, "|", &saveptr);
         printf("[SERVER]>>Solicitare de la %s (%d): trimite topul cu melodii (genul : %s)\n", username,
                tnumber, genre);
         fflush(stdout);
@@ -314,7 +316,7 @@ bool HandleRequest(int* usertype, int tnumber, const char* username, char* reque
     }
     else if (!strcmp(token, "GET_COMMS"))
     {
-        char* song_id = strtok(NULL, "|");
+        char* song_id = strtok_r(NULL, "|", &saveptr);
         printf("[SERVER]>>Solicitare de la %s (%d): trimite comentariile melodiei cu id:%s!\n", username,
                tnumber, song_id);
         fflush(stdout);
@@ -323,8 +325,8 @@ bool HandleRequest(int* usertype, int tnumber, const char* username, char* reque
     }
     else if (!strcmp(token, "ADD_COMM"))
     {
-        int   song_id = atoi(strtok(NULL, "|"));
-        char* comment = strtok(NULL, "|");
+        int   song_id = atoi(strtok_r(NULL, "|", &saveptr));
+        char* comment = strtok_r(NULL, "|", &saveptr);
         printf("[SERVER]>>Solicitare de la %s (%d): adauga un comentariu la melodia cu id:%d\n", username,
                tnumber, song_id);
         fflush(stdout);
@@ -332,14 +334,14 @@ bool HandleRequest(int* usertype, int tnumber, const char* username, char* reque
     }
     else if (!strcmp(token, "VOTE_UP"))
     {
-        int id = atoi(strtok(NULL, "|"));
+        int id = atoi(strtok_r(NULL, "|", &saveptr));
         printf("[SERVER]>>Solicitare de la %s (%d): voteaza melodia cu id:%d\n", username, tnumber, id);
         fflush(stdout);
         return ((*DB_handler).VoteSong(username, id, response, true));
     }
     else if (!strcmp(token, "VOTE_DOWN"))
     {
-        char* id = strtok(NULL, "|");
+        char* id = strtok_r(NULL, "|", &saveptr);
         printf("[SERVER]>>Solicitare de la %s (%d): sterge votul dat melodiei cu id:%s\n", username,
                tnumber, id);
         fflush(stdout);
@@ -348,11 +350,11 @@ bool HandleRequest(int* usertype, int tnumber, const char* username, char* reque
     }
     else if (!strcmp(token, "ADD_SONG"))
     {
-        char* name        = strtok(NULL, "|");
-        char* author      = strtok(NULL, "|");
-        char* description = strtok(NULL, "|");
-        char* link        = strtok(NULL, "|");
-        char* genres      = strtok(NULL, "|");
+        char* name        = strtok_r(NULL, "|", &saveptr);
+        char* author      = strtok_r(NULL, "|", &saveptr);
+        char* description = strtok_r(NULL, "|", &saveptr);
+        char* link        = strtok_r(NULL, "|", &saveptr);
+        char* genres      = strtok_r(NULL, "|", &saveptr);
         printf("[SERVER]>>Solicitare de la %s (%d): adauga o melodie in baza de date.\n", username,
                tnumber);
         fflush(stdout);
@@ -362,7 +364,7 @@ bool HandleRequest(int* usertype, int tnumber, const char* username, char* reque
     {
         if (*usertype > 0)
         {
-            int id = atoi(strtok(NULL, "|"));
+            int id = atoi(strtok_r(NULL, "|", &saveptr));
             printf("[SERVER]>>Solicitare de la %s (%d): sterge melodia cu id:%d din baza de date.\n", username,
                    tnumber, id);
             fflush(stdout);
@@ -373,8 +375,8 @@ bool HandleRequest(int* usertype, int tnumber, const char* username, char* reque
     {
         if (*usertype > 0)
         {
-            char* name      = strtok(NULL, "|");
-            int   has_right = atoi(strtok(NULL, "|"));
+            char* name      = strtok_r(NULL, "|", &saveptr);
+            int   has_right = atoi(strtok_r(NULL, "|", &saveptr));
             printf("[SERVER]>>Solicitare de la %s (%d): schimba dreptul de vot al utilizatorului: %s!\n",
                    username, tnumber, name);
             fflush(stdout);

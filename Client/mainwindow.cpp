@@ -61,6 +61,19 @@ void MainWindow::on_actionQuit_triggered()
     QApplication::quit();
 }
 
+void MainWindow::on_actionDeconecteaza_te_triggered()
+{
+    if (QMessageBox::question(this, "Esti sigur?", "Sigur vrei sa te deconectezi de la server?",
+                              QMessageBox::Yes | QMessageBox::No)
+            != QMessageBox::Yes)
+    {
+        return;
+    }
+    ::close(sv_sock);
+    sv_sock = -1;
+    ui->stackedWidget->setCurrentWidget(ui->connectToServerPage);
+}
+
 void MainWindow::on_connectButton_clicked()
 {
     std::string textIP   = ui->ipText->text().toStdString();
@@ -298,8 +311,8 @@ void MainWindow::goToConnectToServer()
 
 void MainWindow::goToUsersPage()
 {
-    on_refreshUsers_clicked();
     ui->stackedWidget->setCurrentWidget(ui->showUsers);
+    on_refreshUsers_clicked();
 }
 
 void MainWindow::on_backToTop_clicked()
@@ -318,8 +331,8 @@ void MainWindow::on_refreshUsers_clicked()
     //trimiterea cererii(request) si primirea raspunsului(response)
     if (topForm->SendRequestToServer(request, response) == 0)
     {
-        ui->stackedWidget->setCurrentWidget(ui->connectToServerPage);
         ::close(sv_sock);
+        ui->stackedWidget->setCurrentWidget(ui->connectToServerPage);
         return;
     }
 

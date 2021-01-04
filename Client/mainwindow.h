@@ -29,29 +29,18 @@ class MainWindow : public QMainWindow
 
     private slots:
         void on_actionQuit_triggered();
-
+        void on_actionDeconecteaza_te_triggered();
         void on_gotToRegister_clicked();
-
         void on_goToLogin_clicked();
-
         void on_backToFirst1_clicked();
-
         void on_backToFirst2_clicked();
-
         void on_connectButton_clicked();
-
         void on_loginButton_clicked();
-
         void on_registerButton_clicked();
-
         void on_adminCheckBox_stateChanged(int arg1);
-
         void goToConnectToServer();
-
         void goToUsersPage();
-
         void on_refreshUsers_clicked();
-
         void on_backToTop_clicked();
 
     private:

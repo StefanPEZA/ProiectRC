@@ -227,22 +227,30 @@ int DataHandler::GetLastSongId()
 
 bool DataHandler::RemoveSong(int song_id, char* data)
 {
-    bool      ok = false;
     QSqlQuery q(DB);
+
+    q.prepare("SELECT COUNT(*) FROM songs WHERE song_id = ?");
+    q.addBindValue(song_id);
+    q.exec();
+    q.first();
+    if (q.value(0).toInt() == 0)
+    {
+        strcpy(data, "FAIL|Melodia a fost deja stearsa din baza de date!");
+        return false;
+    }
 
     q.prepare("DELETE FROM songs WHERE song_id = ?");
     q.addBindValue(song_id);
     if (q.exec())
     {
         strcpy(data, "PASS|Melodia a fost stearsa cu succes!");
-        ok = true;
+        return true;
     }
     else
     {
         strcpy(data, "FAIL|Ceva nu a mers bine la stergerea melodiei!");
-        ok = false;
+        return false;
     }
-    return (ok);
 }
 
 bool DataHandler::VoteSong(const char* username, int song_id, char* data,

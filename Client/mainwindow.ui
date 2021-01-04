@@ -63,7 +63,7 @@ color:white</string>
      <enum>QFrame::Sunken</enum>
     </property>
     <property name="currentIndex">
-     <number>3</number>
+     <number>0</number>
     </property>
     <widget class="QWidget" name="connectToServerPage">
      <widget class="QPushButton" name="connectButton">
@@ -849,6 +849,7 @@ background-color:rgb(30,30,30)</string>
     <property name="title">
      <string>Menu</string>
     </property>
+    <addaction name="actionDeconecteaza_te"/>
     <addaction name="actionQuit"/>
    </widget>
    <addaction name="menuMenu"/>
@@ -856,7 +857,12 @@ background-color:rgb(30,30,30)</string>
   <widget class="QStatusBar" name="statusBar"/>
   <action name="actionQuit">
    <property name="text">
-    <string>Quit</string>
+    <string>Iesire</string>
+   </property>
+  </action>
+  <action name="actionDeconecteaza_te">
+   <property name="text">
+    <string>Deconecteaza-te</string>
    </property>
   </action>
  </widget>

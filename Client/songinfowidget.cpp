@@ -84,11 +84,6 @@ songInfoWidget::~songInfoWidget()
 
 void songInfoWidget::on_songVoteUp_clicked()
 {
-    if (QMessageBox::question(this, "Votezi?", "Sigur vrei sa votezi aceasta melodie?", QMessageBox::Yes | QMessageBox::No)
-            != QMessageBox::Yes)
-    {
-        return;
-    }
     char request[2048]   = "";               //se trimite la server
     char response[10240] = "";               //se primeste de la server
 
@@ -116,12 +111,6 @@ void songInfoWidget::on_songVoteUp_clicked()
 
 void songInfoWidget::on_songVoteDown_clicked()
 {
-    if (QMessageBox::question(this, "Retragi votul?", "Sigur vrei sa-ti retragi votul de la aceasta melodie?",
-                              QMessageBox::Yes | QMessageBox::No)
-            != QMessageBox::Yes)
-    {
-        return;
-    }
     char request[2048]   = "";                //se trimite la server
     char response[10240] = "";                //se primeste de la server
 
@@ -178,7 +167,7 @@ void songInfoWidget::on_songDelete_clicked()
     else
     {
         QMessageBox::information(this, "Succes, din pacate!",
-                                 "Stergerea melodiei a avut loc cu succes! " + name + " - " + author);
+                                 "Stergerea melodiei a avut loc cu succes! \n" + name + " - " + author);
     }
 }
 
