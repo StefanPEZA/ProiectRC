@@ -44,37 +44,48 @@ songInfoWidget::songInfoWidget(int* _sv_sock, int _acc_type, int _place, int _so
     ui->label->setText("<a style = \"text-decoration:none;color:#F2AA4C\" href = \"" + link + "\">" + link + "</a>");
 }
 
-int songInfoWidget::SendRequestToServer(char* request, char* response)
+char* songInfoWidget::SendRequestToServer(char* request)
 {
+    char* response = NULL;
     int len = strlen(request);
 
     if (write(*sv_sock, &len, 4) <= 0)
     {
         QMessageBox::information(this, "Ceva nu e bine!",
                                  "Conectiunea la server a fost pierduta! (" + QString(strerror(errno)) + ")");
-        return (0);
+        return NULL;
     }
     if (write(*sv_sock, request, len) <= 0)
     {
         QMessageBox::information(this, "Ceva nu e bine!",
                                  "Conectiunea la server a fost pierduta! (" + QString(strerror(errno)) + ")");
-        return (0);
+        return NULL;
     }
 
     if (read(*sv_sock, &len, 4) <= 0)
     {
         QMessageBox::information(this, "Ceva nu e bine!",
                                  "Conectiunea la server a fost pierduta! (" + QString(strerror(errno)) + ")");
-        return (0);
+        return NULL;
     }
-    if (read(*sv_sock, response, len) <= 0)
+    response = new char[len + 1];
+    int bytesRead = 0;
+    int result;
+    while (bytesRead < len)
     {
-        QMessageBox::information(this, "Ceva nu e bine!",
-                                 "Conectiunea la server a fost pierduta! (" + QString(strerror(errno)) + ")");
-        return (0);
+        result = read(*sv_sock, response + bytesRead, len - bytesRead);
+        if (result < 1 )
+        {
+            delete[] response;
+            QMessageBox::information(this, "Ceva nu e bine!",
+                                     "Conectiunea la server a fost pierduta! (" + QString(strerror(errno)) + ")");
+            return NULL;
+        }
+
+        bytesRead += result;
     }
     response[len] = '\0';
-    return (1);
+    return response;
 }
 
 songInfoWidget::~songInfoWidget()
@@ -85,12 +96,12 @@ songInfoWidget::~songInfoWidget()
 void songInfoWidget::on_songVoteUp_clicked()
 {
     char request[2048]   = "";               //se trimite la server
-    char response[10240] = "";               //se primeste de la server
+    char* response = NULL;               //se primeste de la server
 
     sprintf(request, "VOTE_UP|%d", song_id);
 
     //trimiterea cererii(request) si primirea raspunsului(response)
-    if (SendRequestToServer(request, response) == 0)
+    if ((response = SendRequestToServer(request)) == NULL)
     {
         ::close(*sv_sock);
         emit disconnectFromServer();
@@ -107,17 +118,18 @@ void songInfoWidget::on_songVoteUp_clicked()
     {
         QMessageBox::information(this, "Multumim!", "Ai votat cu succes melodia: " + name + " - " + author);
     }
+    delete[] response;
 }
 
 void songInfoWidget::on_songVoteDown_clicked()
 {
     char request[2048]   = "";                //se trimite la server
-    char response[10240] = "";                //se primeste de la server
+    char* response = NULL;                //se primeste de la server
 
     sprintf(request, "VOTE_DOWN|%d", song_id);
 
     //trimiterea cererii(request) si primirea raspunsului(response)
-    if (SendRequestToServer(request, response) == 0)
+    if ((response = SendRequestToServer(request)) == NULL)
     {
         ::close(*sv_sock);
         emit disconnectFromServer();
@@ -135,6 +147,7 @@ void songInfoWidget::on_songVoteDown_clicked()
         QMessageBox::information(this, "Nu-ti mai place?",
                                  "Ti-ai retras votul cu succes de la melodia: " + name + " - " + author);
     }
+    delete[] response;
 }
 
 void songInfoWidget::on_songDelete_clicked()
@@ -146,12 +159,12 @@ void songInfoWidget::on_songDelete_clicked()
         return;
     }
     char request[2048]   = "";                 //se trimite la server
-    char response[10240] = "";                 //se primeste de la server
+    char* response = NULL;                 //se primeste de la server
 
     sprintf(request, "DELETE_SONG|%d", song_id);
 
     //trimiterea cererii(request) si primirea raspunsului(response)
-    if (SendRequestToServer(request, response) == 0)
+    if ((response = SendRequestToServer(request)) == NULL)
     {
         ::close(*sv_sock);
         emit disconnectFromServer();
@@ -169,6 +182,7 @@ void songInfoWidget::on_songDelete_clicked()
         QMessageBox::information(this, "Succes, din pacate!",
                                  "Stergerea melodiei a avut loc cu succes! \n" + name + " - " + author);
     }
+    delete[] response;
 }
 
 void songInfoWidget::on_songComments_clicked()

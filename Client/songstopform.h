@@ -22,7 +22,7 @@ class SongsTopForm : public QWidget
         char* username;
         int acc_type;
         explicit SongsTopForm(char* username, int _acc_type, int* _sv_sock, QWidget* parent = nullptr);
-        int SendRequestToServer(char* request, char* response);
+        char* SendRequestToServer(char* request);
         ~SongsTopForm();
 
     private:

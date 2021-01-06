@@ -29,44 +29,55 @@ SongsTopForm::~SongsTopForm()
     delete ui;
 }
 
-int SongsTopForm::SendRequestToServer(char* request, char* response)
+char* SongsTopForm::SendRequestToServer(char* request)
 {
+    char* response = NULL;
     int len = strlen(request);
 
     if (write(*sv_sock, &len, 4) <= 0)
     {
         QMessageBox::information(this, "Ceva nu e bine!",
                                  "Conectiunea la server a fost pierduta! (" + QString(strerror(errno)) + ")");
-        return (0);
+        return NULL;
     }
     if (write(*sv_sock, request, len) <= 0)
     {
         QMessageBox::information(this, "Ceva nu e bine!",
                                  "Conectiunea la server a fost pierduta! (" + QString(strerror(errno)) + ")");
-        return (0);
+        return NULL;
     }
 
     if (read(*sv_sock, &len, 4) <= 0)
     {
         QMessageBox::information(this, "Ceva nu e bine!",
                                  "Conectiunea la server a fost pierduta! (" + QString(strerror(errno)) + ")");
-        return (0);
+        return NULL;
     }
-    if (read(*sv_sock, response, len) <= 0)
+    response = new char[len + 1];
+    int bytesRead = 0;
+    int result;
+    while (bytesRead < len)
     {
-        QMessageBox::information(this, "Ceva nu e bine!",
-                                 "Conectiunea la server a fost pierduta! (" + QString(strerror(errno)) + ")");
-        return (0);
+        result = read(*sv_sock, response + bytesRead, len - bytesRead);
+        if (result < 1 )
+        {
+            delete[] response;
+            QMessageBox::information(this, "Ceva nu e bine!",
+                                     "Conectiunea la server a fost pierduta! (" + QString(strerror(errno)) + ")");
+            return NULL;
+        }
+
+        bytesRead += result;
     }
     response[len] = '\0';
-    return (1);
+    return response;
 }
 
 //functia care va cere topul cu melodii de la server si il va afisa
 void SongsTopForm::on_pushButton_clicked()
 {
     char request[2048]    = "";               //se trimite la server
-    char response[102400] = "";               //se primeste de la server
+    char* response = NULL;             //se primeste de la server
 
     std::string req(ui->comboBox->currentText().toStdString());
 
@@ -82,7 +93,7 @@ void SongsTopForm::on_pushButton_clicked()
     strcpy(request, req.c_str());
 
     //trimiterea cererii(request) si primirea raspunsului(response)
-    if (SendRequestToServer(request, response) == 0)
+    if ((response = SendRequestToServer(request)) == NULL)
     {
         emit disconnectedFromServer();
         ::close(*sv_sock);
@@ -122,6 +133,7 @@ void SongsTopForm::on_pushButton_clicked()
             ui->songList->setItemWidget(item, info);
         }
     }
+    delete[] response;
 }
 
 void SongsTopForm::emitDisconnectSignal()
@@ -132,12 +144,12 @@ void SongsTopForm::emitDisconnectSignal()
 void SongsTopForm::goToComments(int _song_id, const char* _title)
 {
     char request[2048]    = "";                //se trimite la server
-    char response[102400] = "";                //se primeste de la server
+    char* response = NULL;                //se primeste de la server
 
     sprintf(request, "GET_COMMS|%d", _song_id);
 
     //trimiterea cererii(request) si primirea raspunsului(response)
-    if (SendRequestToServer(request, response) == 0)
+    if ((response = SendRequestToServer(request)) == NULL)
     {
         emit disconnectedFromServer();
         ::close(*sv_sock);
@@ -164,6 +176,7 @@ void SongsTopForm::goToComments(int _song_id, const char* _title)
             ui->commentsList->addItem("[>> Scris de \"" + QString(name) + "\" <<]:\n" + QString(comment));
         }
     }
+    delete[] response;
     song_id = _song_id;
     ui->songTitle->setText(_title);
     ui->stackedWidget->setCurrentWidget(ui->commentPage);
@@ -172,7 +185,7 @@ void SongsTopForm::goToComments(int _song_id, const char* _title)
 void SongsTopForm::on_postComment_clicked()
 {
     char request[2048]   = "";                  //se trimite la server
-    char response[10240] = "";                  //se primeste de la server
+    char* response = NULL;                 //se primeste de la server
 
     std::string com     = ui->commentText->toPlainText().toStdString();
     const char* comment = com.c_str();
@@ -180,7 +193,7 @@ void SongsTopForm::on_postComment_clicked()
     sprintf(request, "ADD_COMM|%d|%s", song_id, comment);
 
     //trimiterea cererii(request) si primirea raspunsului(response)
-    if (SendRequestToServer(request, response) == 0)
+    if ((response = SendRequestToServer(request)) == NULL)
     {
         emit disconnectedFromServer();
         ::close(*sv_sock);
@@ -200,6 +213,7 @@ void SongsTopForm::on_postComment_clicked()
         std::string title = ui->songTitle->text().toStdString();
         goToComments(song_id, title.c_str());
     }
+    delete[] response;
 }
 
 void SongsTopForm::on_goBackButton_clicked()
@@ -225,7 +239,7 @@ void SongsTopForm::on_goBack2_clicked()
 void SongsTopForm::on_addSongButton_clicked()
 {
     char request[2048]   = "";                  //se trimite la server
-    char response[10240] = "";                  //se primeste de la server
+    char* response = NULL;                  //se primeste de la server
 
     std::string songname        = ui->songNameText->text().toStdString();
     std::string author      = ui->songAuthorText->text().toStdString();
@@ -243,7 +257,7 @@ void SongsTopForm::on_addSongButton_clicked()
             genres.c_str());
 
     //trimiterea cererii(request) si primirea raspunsului(response)
-    if (SendRequestToServer(request, response) == 0)
+    if ((response = SendRequestToServer(request)) == NULL)
     {
         emit disconnectedFromServer();
         ::close(*sv_sock);

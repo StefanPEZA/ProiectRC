@@ -86,37 +86,48 @@ void UserInfoWidget::updateUser()
 
 }
 
-int UserInfoWidget::SendRequestToServer(char* request, char* response)
+char* UserInfoWidget::SendRequestToServer(char* request)
 {
+    char* response = NULL;
     int len = strlen(request);
 
     if (write(sv_sock, &len, 4) <= 0)
     {
         QMessageBox::information(this, "Ceva nu e bine!",
                                  "Conectiunea la server a fost pierduta! (" + QString(strerror(errno)) + ")");
-        return (0);
+        return NULL;
     }
     if (write(sv_sock, request, len) <= 0)
     {
         QMessageBox::information(this, "Ceva nu e bine!",
                                  "Conectiunea la server a fost pierduta! (" + QString(strerror(errno)) + ")");
-        return (0);
+        return NULL;
     }
 
     if (read(sv_sock, &len, 4) <= 0)
     {
         QMessageBox::information(this, "Ceva nu e bine!",
                                  "Conectiunea la server a fost pierduta! (" + QString(strerror(errno)) + ")");
-        return (0);
+        return NULL;
     }
-    if (read(sv_sock, response, len) <= 0)
+    response = new char[len + 1];
+    int bytesRead = 0;
+    int result;
+    while (bytesRead < len)
     {
-        QMessageBox::information(this, "Ceva nu e bine!",
-                                 "Conectiunea la server a fost pierduta! (" + QString(strerror(errno)) + ")");
-        return (0);
+        result = read(sv_sock, response + bytesRead, len - bytesRead);
+        if (result < 1 )
+        {
+            delete[] response;
+            QMessageBox::information(this, "Ceva nu e bine!",
+                                     "Conectiunea la server a fost pierduta! (" + QString(strerror(errno)) + ")");
+            return NULL;
+        }
+
+        bytesRead += result;
     }
     response[len] = '\0';
-    return (1);
+    return response;
 }
 
 void UserInfoWidget::on_changeRight_clicked()
@@ -128,12 +139,12 @@ void UserInfoWidget::on_changeRight_clicked()
         return;
     }
     char request[500]   = "";                  //se trimite la server
-    char response[500] = "";                  //se primeste de la server
+    char* response = NULL;                 //se primeste de la server
 
     sprintf(request, "CHANGE_RIGHT|%s|%d", username.toStdString().c_str(), !can_vote);
 
     //trimiterea cererii(request) si primirea raspunsului(response)
-    if (SendRequestToServer(request, response) == 0)
+    if ((response = SendRequestToServer(request)) == NULL)
     {
         emit disconnectFromServer();
         ::close(sv_sock);
@@ -154,4 +165,5 @@ void UserInfoWidget::on_changeRight_clicked()
         char* text = strtok(NULL, "|");
         QMessageBox::information(this, "Succes!", text);
     }
+    delete[] response;
 }

@@ -147,7 +147,7 @@ char* DataHandler::GetSongsTop(char* genre)
         }
     }
 
-    char songs_count[10];
+    char songs_count[30];
     sprintf(songs_count, "%d|", nr_songs);
     lines->insert(0, std::string(songs_count));
 
@@ -172,7 +172,7 @@ bool DataHandler::GetComments(int song_id, char* data)
         nr_comms++;
         char com[1000];
         sprintf(com, "%s|%s||", name.c_str(), comment.c_str());
-        strncat(data, com, strlen(com));
+        strcat(data, com);
     }
 
     if (nr_comms > 0)
@@ -420,7 +420,7 @@ bool DataHandler::GetUsers(bool (*isConnected)(const char*), char* data)
         nr_users++;
         char user[500];
         sprintf(user, "%s|%d|%d|%d|%d|%d||", name.c_str(), type, can_vote, vote_cnt, comm_cnt, online);
-        strncat(data, user, strlen(user));
+        strcat(data, user);
     }
 
     if (nr_users > 0)

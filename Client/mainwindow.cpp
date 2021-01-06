@@ -100,7 +100,7 @@ void MainWindow::on_connectButton_clicked()
     *         aborting the attempt to connect.  It cannot exceed 255.  This
     *         option should not be used in code intended to be portable.
     * tcp(7) — Linux manual page*/
-    int synRetries = 2;          // Send a total of 3 SYN packets => Timeout ~7s
+    int synRetries = 3;          // Send a total of 4 SYN packets => Timeout ~15s
     setsockopt(sv_sock, IPPROTO_TCP, TCP_SYNCNT, &synRetries, sizeof(synRetries));
 
     bzero(&servaddr, sizeof(servaddr));
@@ -160,11 +160,11 @@ void MainWindow::on_loginButton_clicked()
     }
 
     char request[512]  = ""; //se trimite la server
-    char response[512] = ""; //se primeste de la server
+    char* response = NULL;  //se primeste de la server
 
     sprintf(request, "LOGIN|%s|%s", Name, Passw);
 
-    if (topForm->SendRequestToServer(request, response) == 0)
+    if ((response = topForm->SendRequestToServer(request)) == NULL)
     {
         ::close(sv_sock);
         ui->stackedWidget->setCurrentWidget(ui->connectToServerPage);
@@ -191,6 +191,7 @@ void MainWindow::on_loginButton_clicked()
         ui->stackedWidget->setCurrentWidget(topForm); /*deschide pagina in care se or afisa topurile*/
         /*(clasa care se ocupa de managementul datelor venite de la server*/
     }
+    delete[] response;
 }
 
 void MainWindow::on_registerButton_clicked()
@@ -212,7 +213,7 @@ void MainWindow::on_registerButton_clicked()
     }
 
     char request[512]  = ""; //se trimite la server
-    char response[512] = ""; //se primeste de la server
+    char* response = NULL; //se primeste de la server
 
     if (ui->registerPassw->text() != ui->confirmRegisterPassw->text())
     {
@@ -244,7 +245,7 @@ void MainWindow::on_registerButton_clicked()
         sprintf(request, "REGISTER|%s|%s|%s|%s|%d", Name, FirstN, LastN, Passw, Account_type);
     }
 
-    if (topForm->SendRequestToServer(request, response) == 0)
+    if ((response = topForm->SendRequestToServer(request)) == NULL)
     {
         ::close(sv_sock);
         ui->stackedWidget->setCurrentWidget(ui->connectToServerPage);
@@ -268,8 +269,8 @@ void MainWindow::on_registerButton_clicked()
         sprintf(username, "%s", Name);
         topForm->on_pushButton_clicked();
         ui->stackedWidget->setCurrentWidget(topForm); /*deschide pagina in care se or afisa topurile*/
-        /*(clasa care se ocupa de managementul datelor venite de la server)*/
     }
+    delete[] response;
 }
 
 void MainWindow::on_backToFirst1_clicked()
@@ -324,12 +325,12 @@ void MainWindow::on_backToTop_clicked()
 void MainWindow::on_refreshUsers_clicked()
 {
     char request[2048]    = "";               //se trimite la server
-    char response[102400] = "";               //se primeste de la server
+    char* response = NULL;               //se primeste de la server
 
     strcpy(request, "GET_USERS|");
 
     //trimiterea cererii(request) si primirea raspunsului(response)
-    if (topForm->SendRequestToServer(request, response) == 0)
+    if ((response = topForm->SendRequestToServer(request)) == NULL)
     {
         ::close(sv_sock);
         ui->stackedWidget->setCurrentWidget(ui->connectToServerPage);
@@ -366,4 +367,5 @@ void MainWindow::on_refreshUsers_clicked()
             ui->usersList->setItemWidget(item, user);
         }
     }
+    delete[] response;
 }

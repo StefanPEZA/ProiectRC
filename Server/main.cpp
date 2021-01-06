@@ -175,14 +175,13 @@ void* serverthread(void* client_socket)
     printf("[SERVER]>>S-a creat un thread pentru clientul #%d\n", tnumber);
     fflush(stdout);
 
-    unsigned int msg_size = 0;          /* marimea mesajului primit/trimis */
-    int          usertype = 0;          /* tipul de utilizator: obisnuit/admin */
-    char         username[30];          /* numele utiliatorului conectat */
-    bool         has_access = false;    /* daca clientul este autentificat sau nu*/
-    int          tc_sock;               /* desriptorul de socket asociat clientului */
-    char         request[4096]    = ""; /* buffer pentru datele primite la server de la client*/
-    char         response[102400] = ""; /* buffer pentru datele trimise de server catre client */
-
+    int   msg_size = 0;          /* marimea mesajului primit/trimis */
+    int   usertype = 0;          /* tipul de utilizator: obisnuit/admin */
+    char  username[30];          /* numele utiliatorului conectat */
+    bool  has_access = false;    /* daca clientul este autentificat sau nu*/
+    int   tc_sock;               /* desriptorul de socket asociat clientului */
+    char* request = NULL; /* buffer pentru datele primite la server de la client*/
+    char response[16384]; /* buffer pentru datele trimise de server catre client */
 
     tc_sock = *(int*)client_socket;
 
@@ -198,15 +197,24 @@ void* serverthread(void* client_socket)
             }
             break;
         }
-        if (read(tc_sock, request, msg_size) <= 0)
+        request = new char[msg_size + 1];
+        int bytesRead = 0;
+        int result;
+        while (bytesRead < msg_size)
         {
-            if (!has_access)
+            result = read(tc_sock, request + bytesRead, msg_size - bytesRead);
+            if (result < 1 )
             {
-                fprintf(stderr, "[SERVER]>>Clientul (%d) a pierdut conectiunea!\n", tnumber);
-                close(tc_sock);
-                pthread_exit(0);
+                if (!has_access)
+                {
+                    delete[] request;
+                    fprintf(stderr, "[SERVER]>>Clientul (%d) a pierdut conectiunea!\n", tnumber);
+                    close(tc_sock);
+                    pthread_exit(0);
+                }
+                break;
             }
-            break;
+            bytesRead += result;
         }
         request[msg_size] = '\0';
 
@@ -260,12 +268,12 @@ void* serverthread(void* client_socket)
         {
             strcpy(response, "FAIL|Formatul comenzii nerecunoscut!");
         }
-
         msg_size = strlen(response);
         if (write(tc_sock, &msg_size, 4) <= 0)
         {
             if (!has_access)
             {
+                delete[] request;
                 fprintf(stderr, "[SERVER]>>Clientul (%d) a pierdut conectiunea!\n", tnumber);
                 close(tc_sock);
                 pthread_exit(0);
@@ -276,12 +284,14 @@ void* serverthread(void* client_socket)
         {
             if (!has_access)
             {
+                delete[] request;
                 fprintf(stderr, "[SERVER]>>Clientul (%d) a pierdut conectiunea!\n", tnumber);
                 close(tc_sock);
                 pthread_exit(0);
             }
             break;
         }
+        delete[] request;
     }
 
     fprintf(stderr, "[SERVER]>>Clientul %s (%d) s-a deconectat!\n", username, tnumber);

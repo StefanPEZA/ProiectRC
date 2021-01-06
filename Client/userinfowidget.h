@@ -35,7 +35,7 @@ class UserInfoWidget : public QWidget
 
     private:
         void updateUser();
-        int SendRequestToServer(char* request, char* response);
+        char* SendRequestToServer(char* request);
         Ui::UserInfoWidget* ui;
 };
 
