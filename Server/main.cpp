@@ -1,5 +1,3 @@
-/* https://dutta.csc.ncsu.edu/csc453_spring16/wrap/cli-srv_source/tcp-concurrent-server.c */
-
 #include <QCoreApplication>
 #include <unistd.h>
 #include <stdio.h>
