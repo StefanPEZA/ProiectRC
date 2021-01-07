@@ -27,7 +27,7 @@ bool DataHandler::TryLogin(int* usertype, const char* username, const char* pass
     QString name_search(username);
     QString password_check(password);
 
-    strcpy(data, "");
+    strncpy(data, "", 1);
     QSqlQuery q(DB);
     q.prepare("SELECT username, password, type FROM users WHERE username = :username");
     q.bindValue(":username", name_search);
@@ -43,13 +43,13 @@ bool DataHandler::TryLogin(int* usertype, const char* username, const char* pass
         }
         else
         {
-            strcpy(data, "FAIL|Parola introdusa este incorecta. Incercati din nou!");
+            strncpy(data, "FAIL|Parola introdusa este incorecta. Incercati din nou!", 57);
             ok = false;
         }
     }
     else
     {
-        strcpy(data, "FAIL|Numele de utilizator nu exista in baza de date. Incercati sa va inregistrati!");
+        strncpy(data, "FAIL|Numele de utilizator nu exista in baza de date. Incercati sa va inregistrati!", 83);
         ok = false;
     }
     return (ok);
@@ -59,7 +59,7 @@ bool DataHandler::TryRegister(int* usertype, const char* username,
                               const char* password, const char* first_name,
                               const char* last_name, int acc_type, char* data)
 {
-    strcpy(data, "");
+    strncpy(data, "", 1);
     bool ok = false;
 
     QSqlQuery q(DB);
@@ -157,7 +157,7 @@ char* DataHandler::GetSongsTop(char* genre)
 
 bool DataHandler::GetComments(int song_id, char* data)
 {
-    strcpy(data, "");
+    strncpy(data, "", 1);
     int       ok       = false;
     int       nr_comms = 0;
     QSqlQuery q(DB);
@@ -170,9 +170,9 @@ bool DataHandler::GetComments(int song_id, char* data)
         std::string name    = q.value(0).toString().toStdString();
         std::string comment = q.value(1).toString().toStdString();
         nr_comms++;
-        char com[1000];
-        sprintf(com, "%s|%s||", name.c_str(), comment.c_str());
-        strcat(data, com);
+        char com[2000];
+        int length = sprintf(com, "%s|%s||", name.c_str(), comment.c_str());
+        strncat(data, com, length);
     }
 
     if (nr_comms > 0)
@@ -181,7 +181,7 @@ bool DataHandler::GetComments(int song_id, char* data)
     }
     else
     {
-        strcpy(data, "FAIL|Aceasta melodie nu are nici un comentariu!");
+        strncpy(data, "FAIL|Aceasta melodie nu are nici un comentariu!", 48);
     }
 
     return (ok);
@@ -200,12 +200,12 @@ bool DataHandler::AddComment(int song_id, const char* username,
     q.addBindValue(comment);
     if (q.exec())
     {
-        strcpy(data, "PASS|Comentariul a fost adaugat cu succes!");
+        strncpy(data, "PASS|Comentariul a fost adaugat cu succes!", 43);
         ok = true;
     }
     else
     {
-        strcpy(data, "FAIL|Ceva nu a mers bine, nu s-a putut adauga comentariul");
+        strncpy(data, "FAIL|Ceva nu a mers bine, nu s-a putut adauga comentariul", 58);
         ok = false;
     }
 
@@ -235,7 +235,7 @@ bool DataHandler::RemoveSong(int song_id, char* data)
     q.first();
     if (q.value(0).toInt() == 0)
     {
-        strcpy(data, "FAIL|Melodia a fost deja stearsa din baza de date!");
+        strncpy(data, "FAIL|Melodia a fost deja stearsa din baza de date!", 51);
         return false;
     }
 
@@ -243,12 +243,12 @@ bool DataHandler::RemoveSong(int song_id, char* data)
     q.addBindValue(song_id);
     if (q.exec())
     {
-        strcpy(data, "PASS|Melodia a fost stearsa cu succes!");
+        strncpy(data, "PASS|Melodia a fost stearsa cu succes!", 39);
         return true;
     }
     else
     {
-        strcpy(data, "FAIL|Ceva nu a mers bine la stergerea melodiei!");
+        strncpy(data, "FAIL|Ceva nu a mers bine la stergerea melodiei!", 48);
         return false;
     }
 }
@@ -265,7 +265,7 @@ bool DataHandler::VoteSong(const char* username, int song_id, char* data,
     q.first();
     if (q.value(0).toInt() == 0)
     {
-        strcpy(data, "FAIL|Melodia ceruta nu exista in baza de date");
+        strncpy(data, "FAIL|Melodia ceruta nu exista in baza de date", 46);
         DB.rollback();
         return (false);
     }
@@ -276,7 +276,7 @@ bool DataHandler::VoteSong(const char* username, int song_id, char* data,
     q.first();
     if (q.value(0).toInt() == 0)
     {
-        strcpy(data, "FAIL|Nu aveti permisiunea de a vota!");
+        strncpy(data, "FAIL|Nu aveti permisiunea de a vota!", 37);
         DB.rollback();
         return (false);
     }
@@ -288,13 +288,13 @@ bool DataHandler::VoteSong(const char* username, int song_id, char* data,
     q.first();
     if (q.value(0).toInt() > 0 && is_upvote)
     {
-        strcpy(data, "FAIL|Aveti deja un vot la aceasta melodie!");
+        strncpy(data, "FAIL|Aveti deja un vot la aceasta melodie!", 43);
         DB.rollback();
         return (false);
     }
     else if (q.value(0).toInt() == 0 && !is_upvote)
     {
-        strcpy(data, "FAIL|Nu aveti inca vot la aceasta melodie!");
+        strncpy(data, "FAIL|Nu aveti inca vot la aceasta melodie!", 43);
         DB.rollback();
         return (false);
     }
@@ -306,7 +306,7 @@ bool DataHandler::VoteSong(const char* username, int song_id, char* data,
         q.bindValue(":song_id", song_id);
         q.bindValue(":name", username);
         q.exec();
-        strcpy(data, "PASS|Multumim, ati votat cu succes!");
+        strncpy(data, "PASS|Multumim, ati votat cu succes!", 36);
     }
     else
     {
@@ -314,7 +314,7 @@ bool DataHandler::VoteSong(const char* username, int song_id, char* data,
         q.bindValue(":song_id", song_id);
         q.bindValue(":name", username);
         q.exec();
-        strcpy(data, "PASS|V-ati retras cu succes votul dat melodiei!");
+        strncpy(data, "PASS|V-ati retras cu succes votul dat melodiei!", 48);
     }
     DB.commit();
 
@@ -340,13 +340,13 @@ bool DataHandler::AddSong(const char* name, const char* author,
     q.addBindValue(genres);
     if (q.exec())
     {
-        strcpy(data, "PASS|Melodia a fost adaugata cu succes!");
+        strncpy(data, "PASS|Melodia a fost adaugata cu succes!", 40);
         DB.commit();
         ok = true;
     }
     else
     {
-        strcpy(data, "FAIL|Ceva nu a mers bine la adaugarea melodiei!");
+        strncpy(data, "FAIL|Ceva nu a mers bine la adaugarea melodiei!", 48);
         DB.rollback();
         ok = false;
     }
@@ -366,7 +366,7 @@ bool DataHandler::RestrictVoteRight(const char* username, int has_right,
     q.first();
     if (q.value(0).toInt() == 1)
     {
-        strcpy(data, "FAIL|Ceva nu a mers bine, nu puteti bloca accesul la vot unui alt admin!");
+        strncpy(data, "FAIL|Ceva nu a mers bine, nu puteti bloca accesul la vot unui alt admin!", 73);
         DB.rollback();
         return (false);
     }
@@ -388,7 +388,7 @@ bool DataHandler::RestrictVoteRight(const char* username, int has_right,
     }
     else
     {
-        strcpy(data, "FAIL|Nu s-a putut actualiza baza de date!");
+        strncpy(data, "FAIL|Nu s-a putut actualiza baza de date!", 42);
         DB.rollback();
         return (false);
     }
@@ -398,7 +398,7 @@ bool DataHandler::RestrictVoteRight(const char* username, int has_right,
 
 bool DataHandler::GetUsers(bool (*isConnected)(const char*), char* data)
 {
-    strcpy(data, "");
+    strncpy(data, "", 1);
     int       ok       = false;
     int       nr_users = 0;
     QSqlQuery q(DB);
@@ -419,8 +419,8 @@ bool DataHandler::GetUsers(bool (*isConnected)(const char*), char* data)
         int online = (int)(*isConnected)(name.c_str());
         nr_users++;
         char user[500];
-        sprintf(user, "%s|%d|%d|%d|%d|%d||", name.c_str(), type, can_vote, vote_cnt, comm_cnt, online);
-        strcat(data, user);
+        int length = sprintf(user, "%s|%d|%d|%d|%d|%d||", name.c_str(), type, can_vote, vote_cnt, comm_cnt, online);
+        strncat(data, user, length);
     }
 
     if (nr_users > 0)
@@ -429,7 +429,7 @@ bool DataHandler::GetUsers(bool (*isConnected)(const char*), char* data)
     }
     else
     {
-        strcpy(data, "FAIL|Nici un utilizator gasit!");
+        strncpy(data, "FAIL|Nici un utilizator gasit!", 31);
     }
 
     return (ok);

@@ -90,7 +90,7 @@ void SongsTopForm::on_pushButton_clicked()
         req = "GET_TOP|" + req;
     }
 
-    strcpy(request, req.c_str());
+    strncpy(request, req.c_str(), req.size());
 
     //trimiterea cererii(request) si primirea raspunsului(response)
     if ((response = SendRequestToServer(request)) == NULL)
@@ -281,4 +281,5 @@ void SongsTopForm::on_addSongButton_clicked()
         ui->songGenreText->setText("");
         QMessageBox::information(this, "Succes!", text);
     }
+    delete[] response;
 }
